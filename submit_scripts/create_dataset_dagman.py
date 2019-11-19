@@ -9,7 +9,7 @@ import numpy as np
 from configparser import ConfigParser
 import cPickle as pickle
 import math
-
+from functions import get_files_from_folder
 
 def get_inds(k , ratio):
     n_chunks = round(k/ratio)
@@ -17,7 +17,6 @@ def get_inds(k , ratio):
     for j, val in enumerate(np.arange(0, k - inds_pre[-1])[::-1]):
         inds_pre[-(j+1)] += val
     return inds_pre
-
 
 def parseArguments():
     # Create argument parser
@@ -43,9 +42,21 @@ def parseArguments():
         help="which compression format to use",
         type=str, default='i3.bz2', nargs='+')
     parser.add_argument(
+        "--must_contain",
+        help="strings that must be in filename",
+        type=str, nargs='+')
+    parser.add_argument(
         "--rescue",
         help="Run rescue script?!",
         type=str, default='')
+    parser.add_argument(
+        "--files_per_dataset",
+        help="number of files per dataset",
+        type=int)
+    parser.add_argument(
+        "--exclude",
+        help="strings that must be in filename",
+        type=str, nargs='+')
     args = parser.parse_args()
     return args.__dict__
 
@@ -91,7 +102,7 @@ if __name__ == '__main__':
         print("Write Dagman Files to: {}".format(submitFile))
         RAM_str = "{} GB".format(args["request_RAM"])
         arguments = " --filelist $(PATHs) --dataset_config $(DATASET) "
-        submitFileContent = {"universe": "vanilla",
+        submitFileContent = {#"universe": "vanilla",
                              "notification": "Error",
                              "log": "$(LOGFILE).log",
                              "output": "$(STREAM).out",
@@ -109,44 +120,17 @@ if __name__ == '__main__':
         basepath = [dataset_parser['Basics'][key] for key in
                     dataset_parser['Basics'].keys() if 'mc_path' in key]
         filelist = dataset_parser.get("Basics", "file_list")
-        file_bunches = []
         print(basepath)
-        if folderlist == 'allinmcpath':
-            folderlists = []
-            for p in basepath:
-                tlist = []
-                for root, dirs, files in os.walk(p):
-                    print root
-                    a =  [s_file for s_file in files
-                         if s_file[-6:] in args['compression_format']]
-                    if len(a) > 0:
-                        tlist.append(root)
-                print len(tlist)
-                folderlists.append(tlist)
+        
+
+        run_filelist, num_files = get_files_from_folder(basepath, folderlist, args['compression_format'],
+                                                         filelist, args['must_contain'], args['exclude'])
+        if args['files_per_dataset'] is not None:
+            filesjob = [args["files_per_job"] for j in range(len(run_filelist))]
+            inds = [np.arange(0, int(args['files_per_dataset']), int(args["files_per_job"])) for j in range(len(run_filelist))]
         else:
-            folderlists = [[folder.strip() for folder in folderlist.split(',')]]
-
-        if not filelist == 'allinfolder':
-            filelist = filelist.split(',')
-        num_files = []
-        print folderlists
-        run_filelist = []
-        for j, bfolder in enumerate(folderlists):
-
-            run_filelist.append([])
-            for subpath in bfolder:
-                files = [f for f in os.listdir(subpath) if not os.path.isdir(f)]
-                i3_files_all = [s_file for s_file in files
-                                if s_file[-6:] in args['compression_format']]
-                print len(i3_files_all)
-                if not filelist == 'allinfolder':
-                    i3_files = [f for f in filelist if f in i3_files_all]
-                else:
-                    i3_files = i3_files_all
-                b = [os.path.join(subpath, s_file) for s_file in i3_files]
-                run_filelist[j].extend(b)
-        filesjob = 1.*args['files_per_job']*np.array([len(k) for k in run_filelist])/np.min([len(k) for k in run_filelist])
-        inds = [get_inds(len(k), filesjob[i]) for i,k in enumerate(run_filelist)]
+            filesjob = 1.*args['files_per_job']*np.array([len(k) for k in run_filelist])/np.min([len(k) for k in run_filelist])
+            inds = [get_inds(len(k), filesjob[i]) for i,k in enumerate(run_filelist)]
         for j, rfilelist in enumerate(run_filelist):
             outfolder = os.path.join(dataset_parser.get('Basics', 'out_folder'),
                                      "filelists/dataset", str(j))
@@ -154,7 +138,6 @@ if __name__ == '__main__':
                 os.makedirs(outfolder)
                 print('Created Folder {}'.format(outfolder))
             nfiles = int(round(filesjob[j]))
-            print inds[j][10]
             save_list = [rfilelist[int(inds[j][i]):int(inds[j][i+1])] for i
                          in range(len(inds[j])-1)]
             print('Save filelists for mc  {}'.format(basepath[j]))
@@ -166,10 +149,11 @@ if __name__ == '__main__':
         nodes = []
         print('The number of files for the datasets is {} '.format(num_files))
         print('Resulting in {} jobs'.format(np.min(num_files)))
+        os.makedirs(os.path.join(dataset_parser.get('Basics', 'out_folder'), 'logs'))
         for i in range(np.min(num_files)):
             fname = 'File_{}'.format(i)
             logfile = os.path.join(log_path,fname)
-            stream = os.path.join('/data/user/tglauch/condor', fname)
+            stream = os.path.join(dataset_parser.get('Basics', 'out_folder'), 'logs', fname)
             PATH = ''
             for k in range(len(basepath)):
                 PATH = PATH +\

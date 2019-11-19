@@ -25,29 +25,26 @@ from icecube.icetray import I3Units
 
 nu_pdg = [12, 14, 16, -12, -14, -16]
 
-weight_info = {
-     '11029': {'nfiles': 3190,'nevents': 200000},
-     '11069': {'nfiles': 3920,'nevents': 5000},
-     '11070': {'nfiles': 997,'nevents': 400}, }
 
-def calc_gen_ow(frame, gcdfile):
-    soft = from_simprod(11029)
-    hard_lowE = from_simprod(11069)
-    hard_highE = from_simprod(11070)
-    generator = 3190 * soft + 3920 * hard_highE + 997 * hard_lowE
-    unit = I3Units.cm2/I3Units.m2
-    gen_w = generator(frame['MCPrimary1'].energy, frame['I3MCWeightDict']['PrimaryNeutrinoType'], np.cos(frame['MCPrimary1'].dir.zenith))
-    pint = frame['I3MCWeightDict']['TotalWeight']
-    ow = pint/gen_w/unit
-    return ow
 
-def calc_depositedE(frame, gcdfile=None, surface=None):
+def is_data(frame):
+    if ('I3MCWeightDict' in frame) or ('CorsikaWeightMap' in frame) or ('MCPrimary' in frame) or ('I3MCTree' in frame):
+        return False
+    else:
+        return True
+
+def calc_depositedE(frame, gcdfile=None, surface=None, key='I3MCTree'):
+    if is_data(frame):
+        return True
     if surface is None:
         if gcdfile is None:
             surface = icecube.MuonGun.ExtrudedPolygon.from_I3Geometry(frame['I3Geometry'])
         else:
             surface = icecube.MuonGun.ExtrudedPolygon.from_file(gcdfile, padding=0)
-    I3Tree = frame['I3MCTree']
+    if isinstance(frame[key], icecube.dataclasses.I3Particle):
+        I3Tree = [frame[key]]
+    else:
+        I3Tree = frame[key]
     losses = 0
     for p in I3Tree:
         if not p.is_cascade: continue
@@ -81,11 +78,11 @@ def calc_depositedE_single_p(p, I3Tree, surface):
             losses += p.energy
     return losses
 
-def calc_hitDOMs(frame):
+def calc_hitDOMs(frame, pulsemap="InIceDSTPulses"):
     IC_hitDOMs = 0
     DC_hitDOMs = 0
     DC = [79, 80, 81, 82, 83, 84, 85, 86]
-    pulses = frame["InIceDSTPulses"]
+    pulses = frame[pulsemap]
     # apply the pulsemask --> make it an actual mapping of omkeys to pulses
     try:
         pulses = pulses.apply(frame)
@@ -103,6 +100,8 @@ def calc_hitDOMs(frame):
     return
 
 def starting(p_frame, gcd=None, surface=None):
+    if is_data(p_frame):
+        return True
     if surface is None:
         if gcdfile is None:
             surface = icecube.MuonGun.ExtrudedPolygon.from_I3Geometry(frame['I3Geometry'])
@@ -120,6 +119,8 @@ def starting(p_frame, gcd=None, surface=None):
 
 
 def coincidenceLabel_poly(p_frame):
+    if is_data(p_frame):
+        return True
     if 'I3MCWeightDict' not in p_frame.keys():
         return
     poly = p_frame['PolyplopiaCount']
@@ -132,6 +133,8 @@ def coincidenceLabel_poly(p_frame):
     return
 
 def coincidenceLabel_primary(physics_frame):
+    if is_data(physics_frame):
+        return True
     primary_list = physics_frame["I3MCTree"].get_primaries()
     if len(primary_list) > 1:
         coincidence = 1
@@ -141,6 +144,8 @@ def coincidenceLabel_primary(physics_frame):
 
 
 def tau_decay_length(p_frame):
+    if is_data(p_frame):
+        return True
     I3Tree = p_frame['I3MCTree']
     neutrino = get_the_right_particle(p_frame)
     if abs(neutrino.pdg_encoding) == 16:
@@ -178,8 +183,10 @@ def has_signature(p, surface):
             return -1
 
 def get_primary_nu(p_frame):
+    if is_data(p_frame):
+        return True
     if 'I3MCWeightDict' not in p_frame.keys():
-        return
+        return True
     I3Tree = p_frame['I3MCTree']
     # find first neutrino as seed for find_particle
     for p in I3Tree.get_primaries():
@@ -190,6 +197,8 @@ def get_primary_nu(p_frame):
 
 
 def get_the_right_particle(p_frame, gcdfile=None, surface=None):
+    if is_data(p_frame):
+        return True
     if surface is None:
         if gcdfile is None:
             surface = icecube.MuonGun.ExtrudedPolygon.from_I3Geometry(frame['I3Geometry'])
@@ -210,6 +219,8 @@ def get_the_right_particle(p_frame, gcdfile=None, surface=None):
 def find_particle(p, I3Tree, surface):
 # returns a list of neutrinos, that children interact with the detector,
 # determines after the level, where one is found
+    if is_data(frame):
+        return True
     t_list = []
     children = I3Tree.children(p)
     if len(children) > 3:
@@ -230,6 +241,8 @@ def find_particle(p, I3Tree, surface):
 
 
 def find_all_neutrinos(p_frame):
+    if is_data(p_frame):
+        return True
     I3Tree = p_frame['I3MCTree']
     # find first neutrino as seed for find_particle
     for p in I3Tree.get_primaries():
@@ -253,6 +266,8 @@ def crawl_neutrinos(p, I3Tree, level=0, plist = []):
  
 # Generation of the Classification Label
 def classify(p_frame, gcdfile=None, surface=None):
+    if is_data(p_frame):
+        return True
     pclass = 101 # only for security
     if surface is None:
         if gcdfile is None:
@@ -333,8 +348,30 @@ def classify(p_frame, gcdfile=None, surface=None):
     p_frame.Put("classification", icetray.I3Int(pclass))
     return
 
-def get_inelasticity(p_frame):
-    I3Tree = p_frame['I3MCTree']
+
+def classify_muongun(p_frame, gcdfile=None, surface=None, primary_key='MCPrimary'):
+    if is_data(p_frame):
+        return True
+    if surface is None:
+        if gcdfile is None:
+            surface = icecube.MuonGun.ExtrudedPolygon.from_I3Geometry(p_frame['I3Geometry'])
+        else:
+            surface = icecube.MuonGun.ExtrudedPolygon.from_file(gcdfile, padding=0)
+    p = p_frame[primary_key]
+    if has_signature(p, surface) == 1:
+        pclass = 2  # Through Going Track
+    elif has_signature(p, surface) == 2:
+        pclass = 4  # Stopping Track
+    else:
+        pclass = 0
+    p_frame.Put("classification", icetray.I3Int(pclass))
+    p_frame.Put("visible_track", p)
+    return
+
+def get_inelasticity(p_frame, mctree='I3MCTree'):
+    if is_data(p_frame):
+        return True
+    I3Tree = p_frame[mctree]
     if 'I3MCWeightDict' not  in p_frame.keys():
         return
     interaction_type = p_frame['I3MCWeightDict']['InteractionType']
@@ -350,31 +387,53 @@ def get_inelasticity(p_frame):
     return
 
 def millipede_rel_highest_loss(frame):
+    if not 'SplineMPE_MillipedeHighEnergyMIE' in frame:
+        return
     e_losses = [i.energy for i in frame['SplineMPE_MillipedeHighEnergyMIE'] if i.energy > 0.]
     if len(e_losses) == 0:
-        return 0
-    return np.max(e_losses) / np.sum(e_losses)
+        val = 0
+    else:
+        val = np.max(e_losses) / np.sum(e_losses)
+    frame.Put("millipede_rel_highest_loss", dataclasses.I3Double(val))
+    return
 
 
 def millipede_n_losses(frame):
+    if not 'SplineMPE_MillipedeHighEnergyMIE' in frame:
+        return
     e_losses = [i.energy for i in frame['SplineMPE_MillipedeHighEnergyMIE'] if i.energy > 0.]
-    return len(e_losses)
+    frame.Put("millipede_n_loss", dataclasses.I3Double(len(e_losses)))
+    return
 
 
 def millipede_std(frame):
+    if not 'SplineMPE_MillipedeHighEnergyMIE' in frame:
+        return
     e_losses = [i.energy for i in frame['SplineMPE_MillipedeHighEnergyMIE'] if i.energy>0.]
     if len(e_losses) == 0:
-        return 0
-    return np.std(e_losses)/np.mean(e_losses)
+        val = 0
+    else:
+        val = np.std(e_losses)/np.mean(e_losses)
+    frame.Put("millipede_std", dataclasses.I3Double(val))
+    return
 
 
 def millipede_max_loss(frame):
+    if not 'SplineMPE_MillipedeHighEnergyMIE' in frame:
+        return
     e_losses = [i.energy for i in frame['SplineMPE_MillipedeHighEnergyMIE'] if i.energy>0.]
     if len(e_losses) == 0:
-        return 0
-    return np.amax(e_losses)
+        val= 0
+    else:
+        val = np.amax(e_losses)
+    frame.Put("millipede_max_loss", dataclasses.I3Double(val))
+    return
 
-def get_most_E_muon_info(frame, gcdfile=None, surface=None):
+def get_most_E_muon_info(frame, gcdfile=None, surface=None, tracklist='MMCTrackList', mctree='I3MCTree'):
+    if is_data(frame):
+        return True
+    if tracklist not in frame:
+        return True
     if surface is None:
         if gcdfile is None:
             surface = icecube.MuonGun.ExtrudedPolygon.from_I3Geometry(frame['I3Geometry'])
@@ -383,7 +442,11 @@ def get_most_E_muon_info(frame, gcdfile=None, surface=None):
     e0_list = []
     edep_list = []
     particle_list = []
-    for track in icecube.MuonGun.Track.harvest(frame['I3MCTree'], frame['MMCTrackList']):
+    if isinstance(frame[tracklist], icecube.dataclasses.I3Particle):
+        tlist = [frame[tracklist]]
+    else:
+        tlist=icecube.MuonGun.Track.harvest(frame[mctree], frame[tracklist])
+    for track in tlist:
         # Find distance to entrance and exit from sampling volume
         intersections = surface.intersection(track.pos, track.dir)
         # Get the corresponding energies
@@ -398,13 +461,15 @@ def get_most_E_muon_info(frame, gcdfile=None, surface=None):
     particle_list = np.array(particle_list)[inds]
     if len(particle_list) == 0:
         print('no clear muon')
-        return False
-    frame.Put("Reconstructed_Muon", particle_list[0])
-    frame.Put("mu_E_on_entry", dataclasses.I3Double(e0_list[0]))
-    frame.Put("mu_E_deposited", dataclasses.I3Double(edep_list[inds][0]))
+    else:
+        frame.Put("Reconstructed_Muon", particle_list[0])
+        frame.Put("mu_E_on_entry", dataclasses.I3Double(e0_list[0]))
+        frame.Put("mu_E_deposited", dataclasses.I3Double(edep_list[inds][0]))
     return
 
 def set_signature(frame, gcdfile=None, surface=None):
+    if is_data(frame):
+        return True
     if surface is None:
         if gcdfile is None:
             surface = icecube.MuonGun.ExtrudedPolygon.from_I3Geometry(frame['I3Geometry'])
@@ -439,12 +504,13 @@ def set_signature(frame, gcdfile=None, surface=None):
                 val = 2  # stopping event
         else:
             val = -1 # vertex behind detector
-    #print("signature: {}".format(val))
     frame.Put("signature", icetray.I3Int(val))
     return
 
 
 def track_length_in_detector(frame, gcdfile=None, surface=None,  key="visible_track"):
+    if is_data(frame):
+        return True
     if surface is None:
         if gcdfile is None:
             surface = icecube.MuonGun.ExtrudedPolygon.from_I3Geometry(frame['I3Geometry'])
@@ -467,12 +533,15 @@ def track_length_in_detector(frame, gcdfile=None, surface=None,  key="visible_tr
             val = np.min([p.length-intersections.first,intersections.second-intersections.first])
         else:
             val = 0.
-    #print("track length {}".format(val))
     frame.Put("track_length", dataclasses.I3Double(val))
     return
 
 
+
+
 def first_interaction_point(frame, gcdfile=None, surface=None):
+    if is_data(frame):
+        return True
     if surface is None:
         if gcdfile is None:
             surface = icecube.MuonGun.ExtrudedPolygon.from_I3Geometry(frame['I3Geometry'])
@@ -488,21 +557,25 @@ def first_interaction_point(frame, gcdfile=None, surface=None):
         particle.pos= vis_nu.pos + vis_nu.dir * vis_nu.length
     else:
         return
-    #print particle.pos
+    print particle.pos
     frame.Put("first_interaction_pos", particle)
     return
 
 
-def classify_wrapper(p_frame, surface):
+def classify_wrapper(p_frame, surface, gcdfile=None):
+    if is_data(p_frame):
+        return True
     if 'I3MCWeightDict' in p_frame.keys():
-        classify(p_frame, surface=surface)
+        classify(p_frame, surface=surface, gcdfile=gcdfile)
         return
     else:
-        classify_corsika(p_frame, surface=surface)
+        classify_corsika(p_frame, surface=surface, gcdfile=gcdfile)
         return
 
 
 def classify_corsika(p_frame, gcdfile=None, surface=None):
+    if is_data(p_frame):
+        return True
     if surface is None:
         if gcdfile is None:
             surface = icecube.MuonGun.ExtrudedPolygon.from_I3Geometry(p_frame['I3Geometry'])
@@ -557,3 +630,62 @@ def find_muons(p, I3Tree, surface, level=0, plist = []):
         for child in children:
             find_muons(child, I3Tree, surface, level=level+1, plist=plist)
     return plist
+
+
+def intersection_depth(x, y, z, zenith, azimuth, radius=500., length=1000.):
+    b = x * numpy.cos(azimuth) + y * numpy.sin(azimuth)
+    d = b * b + radius * radius - x * x - y * y
+
+    h = [numpy.nan, numpy.nan]
+    r = [numpy.nan, numpy.nan]
+
+    if d > 0:
+        d = numpy.sqrt(d)
+
+        # Down-track distance to the endcaps
+        costh = numpy.cos(zenith)
+
+        if costh != 0.:
+            h[0] = (z - length / 2.) / costh
+            h[1] = (z + length / 2.) / costh
+            h = sorted(h)
+
+        # Down-track distance to the side surfaces
+        sinth = numpy.sin(zenith)
+
+        if sinth != 0.:
+            r[0] = (b - d) / sinth
+            r[1] = (b + d) / sinth
+            r = sorted(r)
+
+        # Perfectly horizontal tracks never intersect the endcaps.
+        if costh == 0.:
+            if ((z > -length / 2.) and (z < length / 2.)):
+                h = r
+            else:
+                h = [numpy.nan, numpy.nan]
+        # Perfectly vertical tracks never intersect the sides.
+        elif sinth == 0.:
+            if numpy.hypot(x, y) >= radius:
+                h = [numpy.nan, numpy.nan]
+        # For general tracks, take the last entrace and first exit.
+        else:
+            if (h[0] >= r[1]) or (h[1] <= r[0]):
+                h = [numpy.nan, numpy.nan]
+            else:
+                h[0] = max(r[0], h[0])
+                h[1] = min(r[1], h[1])
+
+    return z + numpy.cos(numpy.pi - zenith) * min(h)
+
+
+def calc_depth(phy_frame, primary_key='MCPrimary'):
+    if is_data(p_frame):
+        return True
+    primary = phy_frame[primary_key]
+    vertex = (primary.dir.x, primary.dir.y, primary.dir.z)
+    zentry = intersection(*vertex,
+                          zenith=primary.dir.zenith,
+                          azimuth=primary.dir.azimuth)
+    phy_frame.Put('depth', dataclasses.I3Double(1950. - zentry))
+    return True

@@ -9,6 +9,13 @@ import numpy as np
 import argparse
 import time
 
+def setNewEdges(edges):
+    newEdges = []
+    for i in range(0,len(edges)-1):
+        newVal = (edges[i]+edges[i+1])*1.0/2
+        newEdges.append(newVal)
+    return np.array(newEdges)
+
 
 # arguments given in the terminal
 def parseArguments():
@@ -25,36 +32,27 @@ def parseArguments():
         "--datadir",
         help=" data directory",
         type=str)
+    parser.add_argument(
+        "--picker",
+        help="which picker function to use",
+        type=str, default='mu_e_reco')
     args = parser.parse_args()
     return args
 
-def sta_prob(ev):
-    dep_e = np.log10(ev['e_dep'])
-    return np.min([(dep_e)**3/27., 1])
-
-def scs_prob(ev):
-    dep_e = np.log10(ev['e_dep'])
-    return np.min([(dep_e)**2/9., 1])
 
 args = parseArguments().__dict__
 print args
-
-picker = {0:6, 1:6, 2:5, 3:12, 4: 12}
-reweight = {0:None, 1:scs_prob, 2:None, 3:sta_prob, 4:None}
-retag = {11: 0}
-
-max_rand = np.max([picker[i] for i in picker.keys()])
-print('max_rand {}'.format(max_rand))
-DATA_DIR = args["datadir"]
+exec 'import pickers.{} as picker'.format(args['picker'])
 input_shape = [10, 10, 60]
 FILTERS = tables.Filters(complib='zlib', complevel=9)
 
 if args['filelist'] is not None:
     file_list = args["filelist"]
     print file_list
-elif DATA_DIR is not None:
+elif args["datadir"] is not None:
+    DATA_DIR = args["datadir"]
     file_list = [i for i in os.listdir(DATA_DIR) if '.h5' in i]
-tfile = os.path.join(DATA_DIR, file_list[0])
+tfile = file_list[0]
 print('Try to open {}'.format(tfile))
 hf1 = h5.File(tfile, 'r')
 keys = hf1.keys()
@@ -63,11 +61,11 @@ dtype=hf1["reco_vals"].dtype
 with tables.open_file(args['outfile'], mode="w", title="Events for training the NN",
                       filters=FILTERS) as h5file:
     input_features = []
-    for key in keys[:-1]:
+    for okey in keys[:-1]:
         feature = h5file.create_earray(
-                h5file.root, key, tables.Float64Atom(),
+                h5file.root, okey, tables.Float64Atom(),
                 (0, input_shape[0], input_shape[1], input_shape[2], 1),
-                title=key)
+                title=okey)
         feature.flush()
         input_features.append(feature)
     reco_vals = tables.Table(h5file.root, 'reco_vals', description=dtype)
@@ -77,26 +75,15 @@ with tables.open_file(args['outfile'], mode="w", title="Events for training the 
     a= time.time()
     for fili in file_list:
         print('Open {}'.format(fili))
-        one_h5file = h5.File(os.path.join(DATA_DIR, fili), 'r')
-        for k in xrange(len(one_h5file["reco_vals"])):
+        one_h5file = h5.File(fili, 'r')
+        num_events = len(one_h5file["reco_vals"])
+        for k in np.random.choice(num_events, num_events, replace=False):
             print k
-            classi = one_h5file["reco_vals"][k]['classification']
-            if classi in retag.keys():
-                classi = retag[classi]
-            if classi not in picker.keys():
+            if picker.pick_events(one_h5file["reco_vals"][k]) == False:
                 print('continue')
-                continue
-            if classi in [3, 4] and one_h5file["reco_vals"][k]['track_length'] < 100:
-                continue
-            if reweight[classi] is not None:
-                prob_val = reweight[classi](one_h5file["reco_vals"][k])
-                if prob_val < float(np.random.uniform(0,1,1)):
-                    continue
-            rand = np.random.choice(np.arange(0,max_rand))
-            if picker[classi] < rand:
-                continue
-            for i, key in enumerate(keys[:-1]):
-                input_features[i].append(np.expand_dims(one_h5file[key][k], axis=0))
+                continue             
+            for i, okey in enumerate(keys[:-1]):
+                input_features[i].append(np.expand_dims(one_h5file[okey][k], axis=0))
             reco_vals.append(np.atleast_1d(one_h5file["reco_vals"][k]))
         for inp_feature in input_features:
                 inp_feature.flush()
