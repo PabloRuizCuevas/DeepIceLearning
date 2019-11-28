@@ -48,8 +48,8 @@ def calc_depositedE(frame, gcdfile=None, surface=None, key='I3MCTree'):
     losses = 0
     for p in I3Tree:
         if not p.is_cascade: continue
-        if not (has_signature(p, surface) == 0): continue 
-        if p.shape == p.Dark: continue 
+        if not (has_signature(p, surface) == 0): continue
+        if p.shape == p.Dark: continue
         if p.type in [p.Hadrons, p.PiPlus, p.PiMinus, p.NuclInt]:
             if p.energy < 1*I3Units.GeV:
                 losses += 0.8*p.energy
@@ -59,8 +59,8 @@ def calc_depositedE(frame, gcdfile=None, surface=None, key='I3MCTree'):
         else:
             losses += p.energy
     #print('deposited energy {}'.format(losses))
-    frame.Put("depE", dataclasses.I3Double(losses)) 
-    return 
+    frame.Put("depE", dataclasses.I3Double(losses))
+    return
 
 def calc_depositedE_single_p(p, I3Tree, surface):
     losses = 0
@@ -129,7 +129,7 @@ def coincidenceLabel_poly(p_frame):
         coincidence = 0
     else:
         coincidence = 1
-    p_frame.Put("multiplicity", icetray.I3Int(coincidence))    
+    p_frame.Put("multiplicity", icetray.I3Int(coincidence))
     return
 
 def coincidenceLabel_primary(physics_frame):
@@ -256,14 +256,14 @@ def crawl_neutrinos(p, I3Tree, level=0, plist = []):
     if len(plist) < level+1:
         plist.append([])
     if (p.is_neutrino) & np.isfinite(p.length):
-        plist[level].append(p) 
+        plist[level].append(p)
     children = I3Tree.children(p)
     if len(children) < 10:
         for child in children:
             crawl_neutrinos(child, I3Tree, level=level+1, plist=plist)
     return plist
 
- 
+
 # Generation of the Classification Label
 def classify(p_frame, gcdfile=None, surface=None):
     if is_data(p_frame):
@@ -382,7 +382,7 @@ def get_inelasticity(p_frame, mctree='I3MCTree'):
         children = I3Tree.children(neutrino)
         for child in children:
             if child.type_string == "Hadrons":
-                inela = 1.0*child.energy/neutrino.energy  
+                inela = 1.0*child.energy/neutrino.energy
     p_frame.Put("inelasticity", dataclasses.I3Double(inela))
     return
 
@@ -515,7 +515,7 @@ def track_length_in_detector(frame, gcdfile=None, surface=None,  key="visible_tr
         if gcdfile is None:
             surface = icecube.MuonGun.ExtrudedPolygon.from_I3Geometry(frame['I3Geometry'])
         else:
-            surface = icecube.MuonGun.ExtrudedPolygon.from_file(gcdfile, padding=0)    
+            surface = icecube.MuonGun.ExtrudedPolygon.from_file(gcdfile, padding=0)
     if not key in frame.keys():
         val = 0.
     else:
@@ -524,7 +524,7 @@ def track_length_in_detector(frame, gcdfile=None, surface=None,  key="visible_tr
         if frame['classification'].value == 3:
             val = intersections.second # Starting Track
         elif frame['classification'].value == 2:
-            val = intersections.second-intersections.first # Through Going Track 
+            val = intersections.second-intersections.first # Through Going Track
         elif frame['classification'].value == 4:
             val = p.length-intersections.first # Stopping Track
         elif frame['classification'].value == 5:
@@ -582,13 +582,13 @@ def classify_corsika(p_frame, gcdfile=None, surface=None):
         else:
             surface = icecube.MuonGun.ExtrudedPolygon.from_file(gcdfile, padding=0)
     mu_list = []
-    I3Tree = p_frame['I3MCTree'] 
+    I3Tree = p_frame['I3MCTree']
     primaries = I3Tree.get_primaries()
     for p in primaries:
         tlist = []
         find_muons(p, I3Tree, surface, plist=tlist)
         mu_list.append(tlist[-1])
-    
+
     if len(np.concatenate(mu_list)) == 0:
         pclass = 11 # Passing Track
     elif len(mu_list)>1:
@@ -597,13 +597,13 @@ def classify_corsika(p_frame, gcdfile=None, surface=None):
         energies = np.array([calc_depositedE_single_p(p, I3Tree, surface) for p in clist])
         inds = np.argsort(energies)
         p_frame.Put("visible_track", clist[inds[-1]])
-    
-    else: 
+
+    else:
         if len(mu_list[0]) >1:
             energies = np.array([calc_depositedE_single_p(p, I3Tree, surface) for p in mu_list[0]])
             mu_signatures = np.array([has_signature(p, surface) for p in mu_list[0]])
             if np.any(mu_signatures==1):
-                pclass = 22 # Through Going Bundle 
+                pclass = 22 # Through Going Bundle
             else:
                 pclass = 23 # Stopping Muon Bundle
             inds = np.argsort(energies)
@@ -617,7 +617,7 @@ def classify_corsika(p_frame, gcdfile=None, surface=None):
     p_frame.Put("classification", icetray.I3Int(pclass))
     return
 
-    
+
 def find_muons(p, I3Tree, surface, level=0, plist = []):
     if len(plist) < level+1:
         plist.append([])
@@ -689,3 +689,34 @@ def calc_depth(phy_frame, primary_key='MCPrimary'):
                           azimuth=primary.dir.azimuth)
     phy_frame.Put('depth', dataclasses.I3Double(1950. - zentry))
     return True
+
+
+#my functions
+'''
+def nmoment(x, counts, c, n):
+    return np.sum(counts*(x-c)**n) / np.sum(counts)
+
+def normalize(time):
+    return (time-min(time))/max(time-min(time))
+
+def mean(charge,time):
+    time=normalize(time)
+    return nmoment(time,charge, 0,1)
+
+def var(charge,time):
+    return nmoment(time,charge, 0,2)
+
+def skw(charge,time):
+    return nmoment(time,charge, 0,3)
+
+def kur(charge,time):
+    return nmoment(time,charge, 0,4)
+
+def mult(charge,time):
+    time=normalize(time)
+    return (skw(charge,time)**2+1)/kur(charge,time)
+
+def diff(charge,time):
+    time=normalize(time)
+    return mean(charge,time)-time[np.argmax(charge)]
+'''

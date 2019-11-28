@@ -37,7 +37,7 @@ def cuts(phy_frame):
 
 def print_info(phy_frame):
     print('run_id {} ev_id {} dep_E {} classification {}  signature {} track_length {}'.format(
-          phy_frame['I3EventHeader'].run_id, phy_frame['I3EventHeader'].event_id, 
+          phy_frame['I3EventHeader'].run_id, phy_frame['I3EventHeader'].event_id,
           phy_frame['depE'].value, phy_frame['classification'].value,
           phy_frame['signature'].value, phy_frame['track_length'].value))
     return
@@ -45,7 +45,7 @@ def print_info(phy_frame):
 
 generator = 1000*weighting.from_simprod(11499) + 1785*weighting.from_simprod(11362)
 flux = GaisserH4a()
-    
+
 def add_weighted_primary(phy_frame):
     if not 'MCPrimary' in phy_frame.keys():
         get_weighted_primary(phy_frame)
@@ -62,10 +62,14 @@ def corsika_weight(phy_frame):
     return
 
 def get_stream(phy_frame):
-    if (phy_frame['I3EventHeader'].sub_event_stream == 'InIceSplit') & (phy_frame['I3EventHeader'].sub_event_id==0):
+    ##maybe conditions in steps ara faster.
+    if (phy_frame['I3EventHeader'].sub_event_stream == 'InIceSplit') & (phy_frame['I3EventHeader'].sub_event_id==0) & (phy_frame['track_length'].value>5) & (phy_frame['classification'].value==5):
+        return True
+    if (phy_frame['I3EventHeader'].sub_event_stream == 'InIceSplit') & (phy_frame['I3EventHeader'].sub_event_id==0) & (phy_frame['classification'].value==1):
         return True
     else:
         return False
+
 
 
 def run(i3_file, num_events, settings, geo_file, pulsemap_key):
@@ -134,6 +138,9 @@ def run(i3_file, num_events, settings, geo_file, pulsemap_key):
     tray.AddModule("I3Reader", "source",
                    FilenameList=[geo_file,
                                  i3_file])
+                                 ##################### add condition module  order matters
+    tray.AddModule(reco_q.classify_wrapper, "classify",surface=surface,Streams=[icetray.I3Frame.Physics])
+    tray.AddModule(reco_q.track_length_in_detector, 'track_length', surface=surface,Streams=[icetray.I3Frame.Physics])
     tray.AddModule(get_stream, "get_stream",
                     Streams=[icetray.I3Frame.Physics])
     tray.AddModule(add_weighted_primary, "add_primary",
@@ -142,9 +149,7 @@ def run(i3_file, num_events, settings, geo_file, pulsemap_key):
                    Streams=[icetray.I3Frame.Physics])
     tray.AddModule(reco_q.get_primary_nu, "primary_nu",
                     Streams=[icetray.I3Frame.Physics])
-    tray.AddModule(reco_q.classify_wrapper, "classify",
-                   surface=surface,
-                    Streams=[icetray.I3Frame.Physics])
+
     tray.AddModule(reco_q.set_signature, "signature",
                    surface=surface,
                     Streams=[icetray.I3Frame.Physics])
@@ -154,9 +159,7 @@ def run(i3_file, num_events, settings, geo_file, pulsemap_key):
     tray.AddModule(reco_q.calc_depositedE, 'depo_energy',
                    surface=surface,
                    Streams=[icetray.I3Frame.Physics])
-    tray.AddModule(reco_q.track_length_in_detector, 'track_length',
-                   surface=surface,
-                   Streams=[icetray.I3Frame.Physics])
+
     tray.AddModule(reco_q.calc_hitDOMs, 'hitDOMs',
                    Streams=[icetray.I3Frame.Physics])
     tray.AddModule(reco_q.get_inelasticity, 'get_inelasticity',
@@ -167,6 +170,7 @@ def run(i3_file, num_events, settings, geo_file, pulsemap_key):
                    Streams=[icetray.I3Frame.Physics])
     tray.AddModule(print_info, 'pinfo',
                    Streams=[icetray.I3Frame.Physics])
+    ##tray.AddModule(reco_q.mult, 'mult',Streams=[icetray.I3Frame.Physics])       ###my
     tray.AddModule(save_to_array, 'save',
                    Streams=[icetray.I3Frame.Physics])
     if num_events == -1:
