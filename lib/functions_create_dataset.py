@@ -126,14 +126,14 @@ def kur(charge,time):
     return nmoment(time,charge, 0,4)
 
 def mult(charge,time):
-    if (len(time)!=0):
+    if (len(time)!=0 and time!=time):
         time=normalize(time)
         return (skw(charge,time)**2+1)/kur(charge,time)
     else:
         return 0
 
 def diff(charge,time):
-    if (len(time)!=0):
+    if (len(time)!=0 and time!=time):
         time=normalize(time)
         return mean(charge,time)-time[np.argmax(charge)]
     else:
