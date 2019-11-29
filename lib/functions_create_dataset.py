@@ -135,11 +135,17 @@ def mult(charge,time):
     else:
         return 0
 
+import math
+
 def diff(charge,time):
 
     time=normalize(time)
     diff1= mean(charge,time)-time[np.argmax(charge)]
-    if(diff1 != diff1):
+   
+    if(math.isnan(diff1)):
+	print("is nan")
+
+    if (diff1 != diff1):
 	return 0
     else:
 	return diff1 
@@ -149,3 +155,4 @@ def diff(charge,time):
 
 
 # python create_data_files.py --dataset_config /data/user/pruiz/DeepIceLearning/configs/create_dataset_all_flav_w_corsika.cfg --files /data/ana/Cscd/StartingEvents/NuGen_new/NuTau/medium_energy/IC86_flasher_p1\=0.3_p2\=0.0/l2/1/l2_00000111.i3.zst
+
