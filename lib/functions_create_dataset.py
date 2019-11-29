@@ -99,11 +99,11 @@ def nmoment(x, counts, c, n):
     return np.sum(counts*(x-c)**n) / np.sum(counts)
 
 def normalize(time):
-    try:
-        #np.seterr(divide='ignore', invalid='ignore')
-        print(max(time-min(time))) 
-        return (time-min(time))/max(time-min(time))
-    return
+
+    #np.seterr(divide='ignore', invalid='ignore')
+    print(max(time-min(time)))
+    return (time-min(time))/max(time-min(time))
+
 
 def mean(charge,time):
     time=normalize(time)
