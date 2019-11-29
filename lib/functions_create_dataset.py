@@ -98,6 +98,7 @@ def pulses_quantiles(charges, times, quantile):
 def nmoment(x, counts, c, n):
     return np.sum(counts*(x-c)**n) / np.sum(counts)
 
+'''
 def normalize(time):
     t=max(time-min(time))
     #np.seterr(divide='ignore', invalid='ignore')
@@ -106,7 +107,10 @@ def normalize(time):
         return (time-min(time))/max(time-min(time))
     else:
         return time
+'''
 
+def normalize(time):
+    return (time-min(time))/max(time-min(time))
 
 def mean(charge,time):
     time=normalize(time)
@@ -122,8 +126,11 @@ def kur(charge,time):
     return nmoment(time,charge, 0,4)
 
 def mult(charge,time):
-    time=normalize(time)
-    return (skw(charge,time)**2+1)/kur(charge,time)
+    if len(time)!=0
+        time=normalize(time)
+        return (skw(charge,time)**2+1)/kur(charge,time)
+    else:
+        return 0
 
 def diff(charge,time):
     time=normalize(time)
