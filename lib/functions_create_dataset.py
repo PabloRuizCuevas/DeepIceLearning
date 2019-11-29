@@ -139,21 +139,16 @@ def mult(charge,time):
 '''
 
 def diff(charge,time):
-    return 0
-
-'''
+   
     time=normalize(time)
     diff1= mean(charge,time)-time[np.argmax(charge)]
    
-    if(math.isnan(diff1)):
-	print("is nan")
-
     if (diff1 != diff1):
 	return 0
     else:
 	return diff1 
     
-'''
+
 
 
 
