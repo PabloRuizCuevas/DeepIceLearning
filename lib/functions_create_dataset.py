@@ -123,8 +123,6 @@ def kur(charge,time):
     return nmoment(time,charge, 0,4)
 
 def mult(charge,time):
-   return 0
-'''
     time=normalize(time)
     kur1=kur(charge,time)
     
@@ -136,7 +134,6 @@ def mult(charge,time):
 	    return kur2 
     else:
         return 0
-'''
 
 def diff(charge,time):
    
