@@ -100,7 +100,7 @@ def nmoment(x, counts, c, n):
 
 def normalize(time):
     try:
-        print("no exception")
+        
         return (time-min(time))/max(time-min(time))
     except ZeroDivisionError:
         print("exception")
