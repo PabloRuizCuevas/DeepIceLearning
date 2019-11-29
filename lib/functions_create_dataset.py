@@ -125,7 +125,7 @@ def kur(charge,time):
     return nmoment(time,charge, 0,4)
 
 def mult(charge,time):
-    print(lne(time))
+    print(len(time))
     time=normalize(time)
     return (skw(charge,time)**2+1)/kur(charge,time)
 
