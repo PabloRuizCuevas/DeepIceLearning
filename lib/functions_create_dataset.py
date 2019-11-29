@@ -127,8 +127,6 @@ def kur(charge,time):
 def mult(charge,time):
     if(len(time)==0):
         print("len zero")
-    if(time!=time):
-        print("nan")
     time=normalize(time)
     return (skw(charge,time)**2+1)/kur(charge,time)
 
