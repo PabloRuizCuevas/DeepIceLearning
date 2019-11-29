@@ -124,9 +124,9 @@ def kur(charge,time):
 
 def mult(charge,time):
     time=normalize(time)
-    kur=kur(charge,time)
-    if(kur==kur and kur!=0):
-        return (skw(charge,time)**2+1)/kur(charge,time)
+    kur1=kur(charge,time)
+    if(kur1==kur1 and kur1!=0):
+        return (skw(charge,time)**2+1)/kur1
     else:
         return 0
 
