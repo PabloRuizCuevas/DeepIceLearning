@@ -138,7 +138,8 @@ def mult(charge,time):
 import math
 
 def diff(charge,time):
-
+    return 0
+'''
     time=normalize(time)
     diff1= mean(charge,time)-time[np.argmax(charge)]
    
@@ -150,7 +151,7 @@ def diff(charge,time):
     else:
 	return diff1 
     
-
+'''
 
 
 
