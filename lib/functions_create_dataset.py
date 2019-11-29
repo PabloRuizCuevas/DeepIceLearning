@@ -103,7 +103,7 @@ def normalize(time):
         #np.seterr(divide='ignore', invalid='ignore')
         if(max(time-min(time))==0):
             print("division cero")
-        if(max(time-min(time))!==max(time-min(time))):
+        if(max(time-min(time))!=max(time-min(time))):
             print("division nan")
         return (time-min(time))/max(time-min(time))
     except ZeroDivisionError:
