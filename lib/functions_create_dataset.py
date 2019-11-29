@@ -100,11 +100,13 @@ def nmoment(x, counts, c, n):
 
 def normalize(time):
     try:
+        print("no exception")
         return (time-min(time))/max(time-min(time))
     except ZeroDivisionError:
+        print("exception")
         return time
     return
-    
+
 def mean(charge,time):
     time=normalize(time)
     return nmoment(time,charge, 0,1)
@@ -125,3 +127,5 @@ def mult(charge,time):
 def diff(charge,time):
     time=normalize(time)
     return mean(charge,time)-time[np.argmax(charge)]
+
+# python create_data_files.py --dataset_config /data/user/pruiz/DeepIceLearning/configs/create_dataset_all_flav_w_corsika.cfg --files /data/ana/Cscd/StartingEvents/NuGen_new/NuTau/medium_energy/IC86_flasher_p1\=0.3_p2\=0.0/l2/1/l2_00000111.i3.zst
