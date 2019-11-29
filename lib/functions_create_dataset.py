@@ -133,7 +133,9 @@ def mult(charge,time):
         return 0
 
 def diff(charge,time):
-    time=normalize(time)
-    return mean(charge,time)-time[np.argmax(charge)]
-
+    if (len(time)!=0):
+        time=normalize(time)
+        return mean(charge,time)-time[np.argmax(charge)]
+    else:
+        return 0
 # python create_data_files.py --dataset_config /data/user/pruiz/DeepIceLearning/configs/create_dataset_all_flav_w_corsika.cfg --files /data/ana/Cscd/StartingEvents/NuGen_new/NuTau/medium_energy/IC86_flasher_p1\=0.3_p2\=0.0/l2/1/l2_00000111.i3.zst
