@@ -125,15 +125,19 @@ def kur(charge,time):
 def mult(charge,time):
     time=normalize(time)
     kur1=kur(charge,time)
+    
     if(kur1==kur1 and kur1!=0):
-        return (skw(charge,time)**2+1)/kur1
+        kur2=(skw(charge,time)**2+1)/kur1
+        kur2[kur2!=kur2]=0   # avoid nan
     else:
         return 0
 
 def diff(charge,time):
 
     time=normalize(time)
-    return mean(charge,time)-time[np.argmax(charge)]
+    diff1= mean(charge,time)-time[np.argmax(charge)]
+    diff1[diff1!=diff1]=0
+    return diff1
 
 
 
