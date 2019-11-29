@@ -123,6 +123,8 @@ def kur(charge,time):
     return nmoment(time,charge, 0,4)
 
 def mult(charge,time):
+   return 0
+'''
     time=normalize(time)
     kur1=kur(charge,time)
     
@@ -134,11 +136,11 @@ def mult(charge,time):
 	    return kur2 
     else:
         return 0
-
-import math
+'''
 
 def diff(charge,time):
     return 0
+
 '''
     time=normalize(time)
     diff1= mean(charge,time)-time[np.argmax(charge)]
