@@ -108,7 +108,6 @@ def normalize(time):
     else:
         return time
 '''
-
 def normalize(time):
     return (time-min(time))/max(time-min(time))
 
@@ -126,16 +125,16 @@ def kur(charge,time):
     return nmoment(time,charge, 0,4)
 
 def mult(charge,time):
-    if (len(time)!=0 and time!=time):
-        time=normalize(time)
-        return (skw(charge,time)**2+1)/kur(charge,time)
-    else:
-        return 0
+    np.seterr(divide='ignore', invalid='ignore')
+    time=normalize(time)
+    return (skw(charge,time)**2+1)/kur(charge,time)
 
 def diff(charge,time):
-    if (len(time)!=0 and time!=time):
-        time=normalize(time)
-        return mean(charge,time)-time[np.argmax(charge)]
-    else:
-        return 0
+    np.seterr(divide='ignore', invalid='ignore')
+    time=normalize(time)
+    return mean(charge,time)-time[np.argmax(charge)]
+
+
+
+
 # python create_data_files.py --dataset_config /data/user/pruiz/DeepIceLearning/configs/create_dataset_all_flav_w_corsika.cfg --files /data/ana/Cscd/StartingEvents/NuGen_new/NuTau/medium_energy/IC86_flasher_p1\=0.3_p2\=0.0/l2/1/l2_00000111.i3.zst
