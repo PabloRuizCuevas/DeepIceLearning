@@ -110,7 +110,7 @@ def normalize(time,charge):
         #print(max(time-min(time)))
         return (time-min(time))/max(time-min(time))
     else:
-        return time,charge
+        return time, charge
 
 
 def mean(charge,time):
@@ -130,7 +130,7 @@ def mult(charge,time):
     if (len(time)<4):
         return 0
     else:
-        time,charge = normalize(time,charge)
+        time , charge = normalize(time,charge)
         kur1=kur(charge,time)
 
         if(kur1==kur1 and kur1!=0):
@@ -145,7 +145,7 @@ def diff(charge,time):
         return 0
     else:
 
-        time,charge = normalize(time,charge)
+        time , charge = normalize(time,charge)
         diff1= mean(charge,time)-time[np.argmax(charge)]
 
         if (diff1 != diff1):
