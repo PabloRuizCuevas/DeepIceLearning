@@ -139,8 +139,6 @@ def mult(charge,time):
     	           return 0
     	else:
     	    return kur2
-        else:
-            return 0
 
 def diff(charge,time):
     if (len(time)<4):
@@ -151,9 +149,9 @@ def diff(charge,time):
         diff1= mean(charge,time)-time[np.argmax(charge)]
 
         if (diff1 != diff1):
-    	       return 0
+            return 0
         else:
-    	return diff1
+            return diff1
 
 ##
 
