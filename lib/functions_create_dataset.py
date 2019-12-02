@@ -114,7 +114,7 @@ def normalize(time,charge):
 
 
 def mean(charge,time):
-    time=normalize(time)
+    time,charge=normalize(time,charge)
     return nmoment(time,charge, 0,1)
 
 def var(charge,time):
