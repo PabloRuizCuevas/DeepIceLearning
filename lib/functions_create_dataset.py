@@ -110,7 +110,7 @@ def normalize(time,charge):
         #print(max(time-min(time)))
         return (time-min(time))/max(time-min(time))
     else:
-        return np.array(time), np.array(charge)
+        return [time, charge]
 
 
 def mean(charge,time):
@@ -155,15 +155,6 @@ def diff(charge,time):
 
 ##
 
-# python create_data_files.py --dataset_config /data/user/pruiz/DeepIceLearning/configs/create_dataset_all_flav_w_corsika.cfg --files /data/ana/Cscd/StartingEvents/NuGen_new/NuTau/medium_energy/IC86_flasher_p1\=0.3_p2\=0.0/l2/1/l2_00000111.i3.zst
-
-# python create_data_files.py --dataset_config /data/user/pruiz/DeepIceLearning/configs/create_dataset_all_flav_w_corsika.cfg --files /data/ana/Cscd/StartingEvents/NuGen_new/NuTau/medium_energy/IC86_flasher_p1\=0.3_p2\=0.0/l2/1/l2_00000111.i3.zst
-
-# python create_data_files.py --dataset_config /data/user/pruiz/DeepIceLearning/configs/create_dataset_all_flav_w_corsika.cfg --files /data/ana/Cscd/StartingEvents/NuGen_new/NuTau/medium_energy/IC86_flasher_p1\=0.3_p2\=0.0/l2/1/l2_00000111.i3.zst
-
-# python create_data_files.py --dataset_config /data/user/pruiz/DeepIceLearning/configs/create_dataset_all_flav_w_corsika.cfg --files /data/ana/Cscd/StartingEvents/NuGen_new/NuTau/medium_energy/IC86_flasher_p1\=0.3_p2\=0.0/l2/1/l2_00000111.i3.zst
-
-# python create_data_files.py --dataset_config /data/user/pruiz/DeepIceLearning/configs/create_dataset_all_flav_w_corsika.cfg --files /data/ana/Cscd/StartingEvents/NuGen_new/NuTau/medium_energy/IC86_flasher_p1\=0.3_p2\=0.0/l2/1/l2_00000111.i3.zst
 
 # python create_data_files.py --dataset_config /data/user/pruiz/DeepIceLearning/configs/create_dataset_all_flav_w_corsika.cfg --files /data/ana/Cscd/StartingEvents/NuGen_new/NuTau/medium_energy/IC86_flasher_p1\=0.3_p2\=0.0/l2/1/l2_00000111.i3.zst
 
