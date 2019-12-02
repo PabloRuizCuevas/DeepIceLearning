@@ -108,9 +108,9 @@ def normalize(time,charge):
     #np.seterr(divide='ignore', invalid='ignore')
     if(t==t and t!=0):
         #print(max(time-min(time)))
-        return (time-min(time))/max(time-min(time))
+        return (time-min(time))/max(time-min(time)),charge
     else:
-        return [time, charge]
+        return time, charge
 
 
 def mean(charge,time):
