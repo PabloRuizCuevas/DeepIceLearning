@@ -142,6 +142,7 @@ def mult(charge,time):
         else:
             return 0
 
+#working
 def diff(charge,time):
     if (len(time)<4):
         return 0

@@ -356,7 +356,7 @@ def normalize():
 
 
 def function(a,b):
-    return a,b
+    return [[1,2,3],[2]]
 
 
 a,b = function(1,2)
