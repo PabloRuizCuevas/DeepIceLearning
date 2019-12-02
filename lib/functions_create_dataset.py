@@ -136,7 +136,7 @@ def mult(charge,time):
         if(kur1==kur1 and kur1!=0):
             kur2=(skw(charge,time)**2+1)/kur1
             if(kur2 != kur2):
-    	    return 0
+    	           return 0
     	else:
     	    return kur2
         else:
@@ -151,7 +151,7 @@ def diff(charge,time):
         diff1= mean(charge,time)-time[np.argmax(charge)]
 
         if (diff1 != diff1):
-    	return 0
+    	       return 0
         else:
     	return diff1
 
