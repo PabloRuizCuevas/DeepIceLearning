@@ -110,7 +110,7 @@ def normalize(time,charge):
         #print(max(time-min(time)))
         return (time-min(time))/max(time-min(time))
     else:
-        return time, charge
+        return np.array(time), np.array(charge)
 
 
 def mean(charge,time):
