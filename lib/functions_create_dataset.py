@@ -137,7 +137,7 @@ def mult(charge,time):
             kur2=(skw(charge,time)**2+1)/kur1
             if(kur2 != kur2):
     	           return 0
-    	else:  ####
+    	else:
     	    return kur2
 
 def diff(charge,time):
@@ -154,6 +154,18 @@ def diff(charge,time):
             return diff1
 
 ##
+
+# python create_data_files.py --dataset_config /data/user/pruiz/DeepIceLearning/configs/create_dataset_all_flav_w_corsika.cfg --files /data/ana/Cscd/StartingEvents/NuGen_new/NuTau/medium_energy/IC86_flasher_p1\=0.3_p2\=0.0/l2/1/l2_00000111.i3.zst
+
+# python create_data_files.py --dataset_config /data/user/pruiz/DeepIceLearning/configs/create_dataset_all_flav_w_corsika.cfg --files /data/ana/Cscd/StartingEvents/NuGen_new/NuTau/medium_energy/IC86_flasher_p1\=0.3_p2\=0.0/l2/1/l2_00000111.i3.zst
+
+# python create_data_files.py --dataset_config /data/user/pruiz/DeepIceLearning/configs/create_dataset_all_flav_w_corsika.cfg --files /data/ana/Cscd/StartingEvents/NuGen_new/NuTau/medium_energy/IC86_flasher_p1\=0.3_p2\=0.0/l2/1/l2_00000111.i3.zst
+
+# python create_data_files.py --dataset_config /data/user/pruiz/DeepIceLearning/configs/create_dataset_all_flav_w_corsika.cfg --files /data/ana/Cscd/StartingEvents/NuGen_new/NuTau/medium_energy/IC86_flasher_p1\=0.3_p2\=0.0/l2/1/l2_00000111.i3.zst
+
+# python create_data_files.py --dataset_config /data/user/pruiz/DeepIceLearning/configs/create_dataset_all_flav_w_corsika.cfg --files /data/ana/Cscd/StartingEvents/NuGen_new/NuTau/medium_energy/IC86_flasher_p1\=0.3_p2\=0.0/l2/1/l2_00000111.i3.zst
+
+# python create_data_files.py --dataset_config /data/user/pruiz/DeepIceLearning/configs/create_dataset_all_flav_w_corsika.cfg --files /data/ana/Cscd/StartingEvents/NuGen_new/NuTau/medium_energy/IC86_flasher_p1\=0.3_p2\=0.0/l2/1/l2_00000111.i3.zst
 
 
 
