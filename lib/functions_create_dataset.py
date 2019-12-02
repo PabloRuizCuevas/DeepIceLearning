@@ -100,8 +100,10 @@ def nmoment(x, counts, c, n):
 
 
 def normalize(time,charge):
-    time=time[time[0]>=400]
-    charge=charge[time[0]>=400]
+
+    charge=charge[time[:]<=time[0]+400]
+    time=time[time[:]<=time[0]+400]
+
     t=max(time-min(time))
     #np.seterr(divide='ignore', invalid='ignore')
     if(t==t and t!=0):
@@ -125,27 +127,33 @@ def kur(charge,time):
     return nmoment(time,charge, 0,4)
 
 def mult(charge,time):
-    time,charge=normalize(time,charge)
-    kur1=kur(charge,time)
-
-    if(kur1==kur1 and kur1!=0):
-        kur2=(skw(charge,time)**2+1)/kur1
-        if(kur2 != kur2):
-	    return 0
-	else:
-	    return kur2
-    else:
+    if (len(time)<4):
         return 0
+    else:
+        time,charge=normalize(time,charge)
+        kur1=kur(charge,time)
+
+        if(kur1==kur1 and kur1!=0):
+            kur2=(skw(charge,time)**2+1)/kur1
+            if(kur2 != kur2):
+    	    return 0
+    	else:
+    	    return kur2
+        else:
+            return 0
 
 def diff(charge,time):
-
-    time,charge=normalize(time,charge)
-    diff1= mean(charge,time)-time[np.argmax(charge)]
-
-    if (diff1 != diff1):
-	return 0
+    if (len(time)<4):
+        return 0
     else:
-	return diff1
+
+        time,charge=normalize(time,charge)
+        diff1= mean(charge,time)-time[np.argmax(charge)]
+
+        if (diff1 != diff1):
+    	return 0
+        else:
+    	return diff1
 
 
 

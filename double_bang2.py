@@ -351,3 +351,20 @@ plt.plot([second,second],[20,-1])
 
 def normalize():
     data_double_charge[0]/sum(data_double_charge[0])
+
+
+
+
+def function(a,b):
+    return a,b
+
+
+a,b = function(1,2)
+a
+b
+min(2)
+np.min(2.)
+np.size(a)
+a=[a] if np.size(a)<2 else 0
+a
+np.min([a])
