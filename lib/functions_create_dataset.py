@@ -99,14 +99,16 @@ def nmoment(x, counts, c, n):
     return np.sum(counts*(x-c)**n) / np.sum(counts)
 
 
-def normalize(time):
+def normalize(time,charge):
+    time=time[time[0]>=400]
+    charge=charge[time[0]>=400]
     t=max(time-min(time))
     #np.seterr(divide='ignore', invalid='ignore')
     if(t==t and t!=0):
         #print(max(time-min(time)))
         return (time-min(time))/max(time-min(time))
     else:
-        return time
+        return time,charge
 
 
 def mean(charge,time):
@@ -123,31 +125,30 @@ def kur(charge,time):
     return nmoment(time,charge, 0,4)
 
 def mult(charge,time):
-    time=normalize(time)
+    time,charge=normalize(time,charge)
     kur1=kur(charge,time)
-    
+
     if(kur1==kur1 and kur1!=0):
         kur2=(skw(charge,time)**2+1)/kur1
         if(kur2 != kur2):
 	    return 0
 	else:
-	    return kur2 
+	    return kur2
     else:
         return 0
 
 def diff(charge,time):
-   
-    time=normalize(time)
+
+    time,charge=normalize(time,charge)
     diff1= mean(charge,time)-time[np.argmax(charge)]
-   
+
     if (diff1 != diff1):
 	return 0
     else:
-	return diff1 
-    
+	return diff1
+
 
 
 
 
 # python create_data_files.py --dataset_config /data/user/pruiz/DeepIceLearning/configs/create_dataset_all_flav_w_corsika.cfg --files /data/ana/Cscd/StartingEvents/NuGen_new/NuTau/medium_energy/IC86_flasher_p1\=0.3_p2\=0.0/l2/1/l2_00000111.i3.zst
-

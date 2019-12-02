@@ -226,6 +226,10 @@ frames=Frame_array(frames0)
 #########################################################################
 
 
+#frames[1].time[frames[1].time[:]>=frames[1].time[0]+400]
+
+
+
 def plot1(x,y,y2,a):
     plt.subplot(2, 1, 1)
     plt.scatter(x,y,c=a,alpha=0.3)
