@@ -135,10 +135,12 @@ def mult(charge,time):
 
         if(kur1==kur1 and kur1!=0):
             kur2=(skw(charge,time)**2+1)/kur1
-            if(kur2 != kur2):
-    	           return 0
-        	else:
-        	    return kur2
+            if(kur2 == kur2):
+                return kur2
+            else:
+                return 0
+        else:
+            return 0
 
 def diff(charge,time):
     if (len(time)<4):
