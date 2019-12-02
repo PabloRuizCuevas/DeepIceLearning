@@ -114,11 +114,17 @@ def normalize(time,charge):
 
 
 def mean(charge,time):
-    time,charge=normalize(time,charge)
-    return nmoment(time,charge, 0,1)
+    if (len(time)<4):
+        return 0
+    else:
+        time,charge=normalize(time,charge)
+        return nmoment(time,charge, 0,1)
 
 def var(charge,time):
-    return nmoment(time,charge, 0,2)
+    if (len(time)<4):
+        return 0
+    else:
+        return nmoment(time,charge, 0,2)
 
 def skw(charge,time):
     return nmoment(time,charge, 0,3)
