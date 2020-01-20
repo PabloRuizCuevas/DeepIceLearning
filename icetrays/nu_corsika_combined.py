@@ -8,6 +8,7 @@ import lib.i3mods
 import lib.reco_quantities as reco_q
 from lib.functions_create_dataset import get_t0
 import numpy as np
+import random
 from icecube.weighting.fluxes import GaisserH4a
 from icecube.weighting import weighting, get_weighted_primary
 import icecube.MuonGun
@@ -64,9 +65,13 @@ def corsika_weight(phy_frame):
 def get_stream(phy_frame):
     ##maybe conditions in steps ara faster.
     if (phy_frame['I3EventHeader'].sub_event_stream == 'InIceSplit') & (phy_frame['I3EventHeader'].sub_event_id==0) & (phy_frame['track_length'].value>5) & (phy_frame['classification'].value==5):
-        return True
+        if (np.cos(phy_frame['true_zen'])) & (random.uniform(0,1)*np.cos(phy_frame['true_zen'])<0.2):
+            return True
     if (phy_frame['I3EventHeader'].sub_event_stream == 'InIceSplit') & (phy_frame['I3EventHeader'].sub_event_id==0) & (phy_frame['classification'].value==1):
-        return True
+        if (random.uniform(0,1)>0.75):   #drop some random events to have more equal distributions
+            return True
+    if (phy_frame['I3EventHeader'].sub_event_stream == 'InIceSplit') & (phy_frame['I3EventHeader'].sub_event_id==0) &
+
     else:
         return False
 
