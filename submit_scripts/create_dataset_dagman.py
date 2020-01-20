@@ -1,6 +1,9 @@
 #!/usr/bin/env python
 
-import pydag
+import imp
+htcondor = imp.load_source('htcondor','/data/user/pruiz/DeepIceLearning/htcondor.py')
+dagman = imp.load_source('htcondor','/data/user/pruiz/DeepIceLearning/dagman.py')
+#import pydag
 import datetime
 import os
 import argparse
@@ -10,6 +13,7 @@ from configparser import ConfigParser
 import cPickle as pickle
 import math
 from functions import get_files_from_folder
+
 
 def get_inds(k , ratio):
     n_chunks = round(k/ratio)
@@ -112,7 +116,7 @@ if __name__ == '__main__':
         #                    "Requirements" : '(Machine != "n-15.icecube.wisc.edu")',
                              "request_memory": RAM_str,
                              "arguments": arguments}
-        submitFile = pydag.htcondor.HTCondorSubmit(submitFile,
+        submitFile = htcondor.HTCondorSubmit(submitFile,
                                                    script,
                                                    **submitFileContent)
         submitFile.dump()
@@ -125,7 +129,8 @@ if __name__ == '__main__':
 
         run_filelist, num_files = get_files_from_folder(basepath, folderlist, args['compression_format'],
                                                          filelist, args['must_contain'], args['exclude'])
-        if args['files_per_dataset'] is not None:
+        
+	if args['files_per_dataset'] is not None:
             filesjob = [args["files_per_job"] for j in range(len(run_filelist))]
             inds = [np.arange(0, int(args['files_per_dataset']), int(args["files_per_job"])) for j in range(len(run_filelist))]
         else:
@@ -161,14 +166,14 @@ if __name__ == '__main__':
                                  "filelists/dataset",
                                  str(k),
                                  '{}.pickle'.format(fname)) + " "
-            dagArgs = pydag.dagman.Macros(LOGFILE=logfile,
+            dagArgs = dagman.Macros(LOGFILE=logfile,
                                           PATHs=PATH,
                                           STREAM = stream,
                                           DATASET=args['dataset_config'])
-            node = pydag.dagman.DAGManNode(i, submitFile)
+            node = dagman.DAGManNode(i, submitFile)
             node.keywords["VARS"] = dagArgs
             nodes.append(node)
-        dag = pydag.dagman.DAGManJob(dagFile, nodes)
+        dag = dagman.DAGManJob(dagFile, nodes)
         dag.dump()
     else:
         dagFile = Resc

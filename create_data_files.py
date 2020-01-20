@@ -222,7 +222,7 @@ if __name__ == "__main__":
         print(h5file)
         print(h5file.root)
 
-        np.save('grid.npy', grid)
+        #np.save('grid.npy', grid)
         TotalEventCounter = 0
         statusInFilelist = 0
         starttime = time.time()

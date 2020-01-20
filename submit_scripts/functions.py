@@ -54,9 +54,12 @@ def get_files_from_folder(basepath, folderlist, compression_format, filelist, mu
     if folderlist == 'allinmcpath':
         folderlists = []
         for p in basepath:
-            tlist = []
+            print("this is working")
+            print(scandir.walk(p))
+	    tlist = []
             for root, dirs, files in scandir.walk(p):
-                print root
+                print("this is not working?")
+		print root
                 if root == 'logs':
                     print('Skip Logs')
                     continue

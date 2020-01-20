@@ -1,0 +1,10 @@
+executable = /data/user/pruiz/DeepIceLearning/submit_scripts/create_dataset_env.sh
+initialdir = /home/tglauch/
+log = $(LOGFILE).log
+universe = vanilla
+request_memory = 4 GB
+error = $(STREAM).err
+arguments =  --filelist $(PATHs) --dataset_config $(DATASET) 
+notification = Error
+output = $(STREAM).out
+queue 1
