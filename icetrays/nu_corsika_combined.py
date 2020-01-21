@@ -148,13 +148,15 @@ def run(i3_file, num_events, settings, geo_file, pulsemap_key):
                                  ##################### add condition module  order matters
     tray.AddModule(reco_q.classify_wrapper, "classify",surface=surface,Streams=[icetray.I3Frame.Physics])
     tray.AddModule(reco_q.track_length_in_detector, 'track_length', surface=surface,Streams=[icetray.I3Frame.Physics])
-    tray.AddModule(get_stream, "get_stream",
-                    Streams=[icetray.I3Frame.Physics])
+
     tray.AddModule(add_weighted_primary, "add_primary",
                     Streams=[icetray.I3Frame.Physics])
     tray.AddModule(corsika_weight, 'weighting',
                    Streams=[icetray.I3Frame.Physics])
     tray.AddModule(reco_q.get_primary_nu, "primary_nu",
+                    Streams=[icetray.I3Frame.Physics])
+
+    tray.AddModule(get_stream, "get_stream",   ##################### here are the conditions evaluated (after calculate params)
                     Streams=[icetray.I3Frame.Physics])
 
     tray.AddModule(reco_q.set_signature, "signature",
