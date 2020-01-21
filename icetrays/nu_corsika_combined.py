@@ -64,14 +64,12 @@ def corsika_weight(phy_frame):
 
 def get_stream(phy_frame):
     ##maybe conditions in steps ara faster.
-    if (phy_frame['I3EventHeader'].sub_event_stream == 'InIceSplit') & (phy_frame['I3EventHeader'].sub_event_id==0) & (phy_frame['track_length'].value>5) & (phy_frame['classification'].value==5):
-        if (random.uniform(0,1)*np.cos(phy_frame['primary_nu'].dir.zenith)<0.2):
+    if (np.cos(phy_frame['primary_nu'].dir.zenith)*random.uniform(0,1)<0.1):
+        if (phy_frame['I3EventHeader'].sub_event_stream == 'InIceSplit') & (phy_frame['I3EventHeader'].sub_event_id==0) & (phy_frame['track_length'].value>5) & (phy_frame['classification'].value==5):
             return True
-        else:
-            return False
-    elif (phy_frame['I3EventHeader'].sub_event_stream == 'InIceSplit') & (phy_frame['I3EventHeader'].sub_event_id==0) & (phy_frame['classification'].value==1):
-        if (random.uniform(0,1)>0.75):   #drop some random events to have more equal distributions
-            return True
+
+        elif (phy_frame['I3EventHeader'].sub_event_stream == 'InIceSplit') & (phy_frame['I3EventHeader'].sub_event_id==0) & (phy_frame['classification'].value==1) & (random.uniform(0,1)>0.85):   #drop some random events to have more equal distributions
+    	    return True
         else:
             return False
     else:
