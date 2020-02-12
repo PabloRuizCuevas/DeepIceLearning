@@ -66,7 +66,7 @@ def get_stream(phy_frame):
     ##maybe conditions in steps ara faster.
     if (phy_frame['I3EventHeader'].sub_event_stream == 'InIceSplit') & (phy_frame['track_length'].value>5) & (phy_frame['classification'].value==5):
         return True
-    elif (phy_frame['I3EventHeader'].sub_event_stream == 'InIceSplit') & (phy_frame['classification'].value==1) & (random.uniform(0,1)<0.67):   #drop some random events to have more equal distributions
+    elif (phy_frame['I3EventHeader'].sub_event_stream == 'InIceSplit') & (phy_frame['classification'].value==1) & (random.uniform(0,1)<0.27):   #drop some random events to have more equal distributions
         return True
     else:
         return False
