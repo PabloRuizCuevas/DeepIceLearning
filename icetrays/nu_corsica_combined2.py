@@ -1,6 +1,7 @@
 from icecube import dataio,icetray
 from icecube import dataclasses
 from I3Tray import *
+import sys
 sys.path.append(os.path.abspath(".."))
 sys.path.append(os.path.join(os.path.abspath(".."),'lib'))
 import lib.reco_quantities as reco_q
@@ -15,6 +16,7 @@ def save_to_array(phy_frame):
         Returns:
         True (IceTray standard)
     """
+
     reco_arr = []
     pulses = None
     for el in settings:
