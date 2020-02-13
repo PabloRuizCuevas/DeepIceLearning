@@ -6,13 +6,15 @@ sys.path.append(os.path.join(os.path.abspath(".."),'lib'))
 import lib.reco_quantities as reco_q
 
 def save_to_array(phy_frame):
-        """Save the waveforms pulses and reco vals to lists.
 
-        Args:
-            phy_frame, and I3 Physics Frame
+    """
+    Save the waveforms pulses and reco vals to lists.
+
+    Args:
+        phy_frame, and I3 Physics Frame
         Returns:
-            True (IceTray standard)
-        """
+        True (IceTray standard)
+    """
     reco_arr = []
     pulses = None
     for el in settings:
