@@ -162,14 +162,14 @@ def track_length_in_detector(frame, gcdfile=None, surface=None,  key="visible_tr
     return
 
 
+def run(i3_file):
+    # I3Tray Defintion
+    tray = I3Tray()
+    tray.AddModule("I3Reader","source", FilenameList=[i3_file])
+    tray.AddModule(reco_q.classify_wrapper, "classify",surface=surface,Streams=[icetray.I3Frame.Physics])
+    tray.AddModule(reco_q.track_length_in_detector, 'track_length', surface=surface,Streams=[icetray.I3Frame.Physics])
+    tray.AddModule(save_to_array, 'save',Streams=[icetray.I3Frame.Physics])
 
-# I3Tray Defintion
-tray = I3Tray()
-tray.AddModule("I3Reader","source", FilenameList=[i3_file])
-tray.AddModule(reco_q.classify_wrapper, "classify",surface=surface,Streams=[icetray.I3Frame.Physics])
-tray.AddModule(reco_q.track_length_in_detector, 'track_length', surface=surface,Streams=[icetray.I3Frame.Physics])
-tray.AddModule(save_to_array, 'save',Streams=[icetray.I3Frame.Physics])
 
-
-tray.Execute()
-tray.Finish()
+    tray.Execute()
+    tray.Finish()
