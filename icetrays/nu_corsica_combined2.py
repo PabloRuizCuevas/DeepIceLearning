@@ -7,6 +7,7 @@ import sys
 sys.path.append(os.path.abspath(".."))
 sys.path.append(os.path.join(os.path.abspath(".."),'lib'))
 sys.path.append("/data/user/pruiz/DeepIceLearning/lib")
+sys.path.append("/data/user/pruiz/DeepIceLearning")
 print(sys.path)
 import lib.reco_quantities as reco_q
 from I3Tray import *
