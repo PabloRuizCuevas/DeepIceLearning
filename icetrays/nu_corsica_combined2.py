@@ -200,7 +200,7 @@ def run(i3_file):
     events['waveforms'] = []
     events['pulses_timeseries'] = []
     events['t0'] = []
-    surface = icecube.MuonGun.ExtrudedPolygon.from_file(geo_file, padding=0)
+    #surface = icecube.MuonGun.ExtrudedPolygon.from_file(geo_file, padding=0)
     def save_to_array(phy_frame):
         """Save the waveforms pulses and reco vals to lists.
 
