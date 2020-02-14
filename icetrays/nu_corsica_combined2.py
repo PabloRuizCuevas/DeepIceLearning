@@ -167,8 +167,8 @@ def track_length_in_detector(frame, gcdfile=None, surface=None,  key="visible_tr
 
 #os.listdir()
 #argparse
-print("directory",sys.argv[0])
-list0=np.array(os.listdir(sys.argv[0]))
+print("directory",sys.argv[1])
+list0=np.array(os.listdir(sys.argv[1]))
 run(list0)
 
 def run(i3_file):
