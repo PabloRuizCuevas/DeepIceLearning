@@ -167,6 +167,7 @@ def track_length_in_detector(frame, gcdfile=None, surface=None,  key="visible_tr
 
 #os.listdir()
 #argparse
+print(sys.argv[0])
 list0=np.array(os.listdir(sys.argv[0]))
 run(list0)
 
