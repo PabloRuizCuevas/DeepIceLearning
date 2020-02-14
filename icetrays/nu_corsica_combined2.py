@@ -1,14 +1,14 @@
 from icecube import dataio,icetray
 from icecube import dataclasses
 import icecube.MuonGun
-from I3Tray import *
 import numpy as np
 import os
 import sys
 sys.path.append(os.path.abspath(".."))
 sys.path.append(os.path.join(os.path.abspath(".."),'lib'))
+print(sys.path)
 import lib.reco_quantities as reco_q
-
+from I3Tray import *
 
 #os.listdir()
 #argparse
