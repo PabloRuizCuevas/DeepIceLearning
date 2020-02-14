@@ -7,7 +7,6 @@ import os
 import sys
 sys.path.append(os.path.abspath(".."))
 sys.path.append(os.path.join(os.path.abspath(".."),'lib'))
-import lib.i3mods
 import lib.reco_quantities as reco_q
 
 
