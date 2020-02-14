@@ -164,6 +164,17 @@ def track_length_in_detector(frame, gcdfile=None, surface=None,  key="visible_tr
     frame.Put("track_length", dataclasses.I3Double(val))
     return
 
+def classify_wrapper(p_frame, surface, gcdfile=None):
+    if is_data(p_frame):
+        return True
+    if 'I3MCWeightDict' in p_frame.keys():
+        classify(p_frame, surface=surface, gcdfile=gcdfile)
+        return
+    else:
+        classify_corsika(p_frame, surface=surface, gcdfile=gcdfile)
+        return
+
+
 
 #os.listdir()
 #argparse
@@ -175,8 +186,8 @@ def run(i3_file):
     # I3Tray Defintion
     tray = I3Tray()
     tray.AddModule("I3Reader","source", FilenameList=[i3_file])
-    tray.AddModule(reco_q.classify_wrapper, "classify",surface=surface,Streams=[icetray.I3Frame.Physics])
-    tray.AddModule(reco_q.track_length_in_detector, 'track_length', surface=surface,Streams=[icetray.I3Frame.Physics])
+    tray.AddModule(classify_wrapper, "classify",surface=surface,Streams=[icetray.I3Frame.Physics])
+    tray.AddModule(track_length_in_detector, 'track_length', surface=surface,Streams=[icetray.I3Frame.Physics])
     tray.AddModule(save_to_array, 'save',Streams=[icetray.I3Frame.Physics])
 
     print("Saving")
