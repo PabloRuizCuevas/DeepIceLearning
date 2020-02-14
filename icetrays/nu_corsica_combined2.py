@@ -246,8 +246,8 @@ def run(i3_file):
 
     tray = I3Tray()
     tray.AddModule("I3Reader","source", FilenameList=[i3_file])
-    tray.AddModule(classify_wrapper, "classify",surface=surface,Streams=[icetray.I3Frame.Physics])
-    tray.AddModule(track_length_in_detector, 'track_length', surface=surface,Streams=[icetray.I3Frame.Physics])
+    tray.AddModule(classify_wrapper, "classify",surface=None,Streams=[icetray.I3Frame.Physics])
+    tray.AddModule(track_length_in_detector, 'track_length', surface=None,Streams=[icetray.I3Frame.Physics])
     tray.AddModule(save_to_array, 'save',Streams=[icetray.I3Frame.Physics])
 
     print("Saving")
