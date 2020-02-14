@@ -251,7 +251,7 @@ def run(i3_file):
     tray.AddModule(save_to_array, 'save',Streams=[icetray.I3Frame.Physics])
 
     print("Saving")
-    save_to_array('track_length')
+    #save_to_array('track_length')
 
     tray.Execute()
     tray.Finish()
