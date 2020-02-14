@@ -1,5 +1,6 @@
 from icecube import dataio,icetray
 from icecube import dataclasses
+import icecube.MuonGun
 from I3Tray import *
 import numpy as np
 import os
