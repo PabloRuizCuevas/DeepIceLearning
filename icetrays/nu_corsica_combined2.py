@@ -1,6 +1,10 @@
 from icecube import dataio,icetray
 from icecube import dataclasses
 from I3Tray import *
+import numpy as np
+import os
+import sys
+
 
 # Generation of the Classification Label
 def classify(p_frame, gcdfile=None, surface=None):
@@ -132,7 +136,6 @@ def save_to_array(phy_frame):
         return False
     return
 
-
 def track_length_in_detector(frame, gcdfile=None, surface=None,  key="visible_track"):
     if is_data(frame):
         return True
@@ -161,6 +164,11 @@ def track_length_in_detector(frame, gcdfile=None, surface=None,  key="visible_tr
     frame.Put("track_length", dataclasses.I3Double(val))
     return
 
+
+#os.listdir()
+#argparse
+list0=np.array(os.listdir(sys.argv[0]))
+run(list0)
 
 def run(i3_file):
     # I3Tray Defintion
