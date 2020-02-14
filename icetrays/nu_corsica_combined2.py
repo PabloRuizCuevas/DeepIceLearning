@@ -257,4 +257,4 @@ def run(i3_file):
     tray.Finish()
     print("finish!")
 
-run(list0)
+run(list0[0:10])
