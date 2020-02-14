@@ -180,7 +180,7 @@ def classify_wrapper(p_frame, surface, gcdfile=None):
 #os.listdir()
 #argparse
 print("directory",sys.argv[1])
-list0=np.array(os.listdir(sys.argv[1]))
+list0=os.listdir(sys.argv[1])
 
 
 def run(i3_file):
