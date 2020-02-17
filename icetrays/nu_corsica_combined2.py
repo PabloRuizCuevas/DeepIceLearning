@@ -15,10 +15,11 @@ from I3Tray import *
 #os.listdir()
 #argparse
 print("directory",sys.argv[1])
+geo_file=sys.argv[2]
 list0 = [os.path.join(sys.argv[1], i) for i in os.listdir(sys.argv[1])]
 
 
-def run(i3_file):
+def run(i3_file,geo_file):
     """IceTray script that wraps around an i3file and fills the events dict
        that is initialized outside the function
 
@@ -35,7 +36,7 @@ def run(i3_file):
     events['waveforms'] = []
     events['pulses_timeseries'] = []
     events['t0'] = []
-    #surface = icecube.MuonGun.ExtrudedPolygon.from_file(geo_file, padding=0)
+    surface = icecube.MuonGun.ExtrudedPolygon.from_file(geo_file, padding=0)
     def save_to_array(phy_frame):
         """Save the waveforms pulses and reco vals to lists.
 
@@ -92,4 +93,4 @@ def run(i3_file):
     tray.Finish()
     print("finish!")
 
-run(list0[0:10])
+run(list0[0:10],geo_file)
