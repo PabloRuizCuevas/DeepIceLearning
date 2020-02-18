@@ -57,7 +57,7 @@ def run(i3_file,geo_file):
 
     print("finish!")
     print(events)
-    np.save("track_length", events)
+    np.save("events", events)
 
 
-run(list0,geo_file)
+run(list0[0:1000],geo_file)
