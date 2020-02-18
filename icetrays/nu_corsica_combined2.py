@@ -61,4 +61,4 @@ def run(i3_file,geo_file):
     np.save("classification",  np.array(events["classification"]))
     np.save("zenith",  np.array(events["zenith"]))
 
-run(list0[0:1000],geo_file)
+run(list0[0:10000],geo_file)
