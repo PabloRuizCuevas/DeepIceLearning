@@ -47,6 +47,7 @@ def run(i3_file,geo_file):
     tray.AddModule("I3Reader","source", FilenameList=i3_file)
     tray.AddModule( reco_q.classify_wrapper, "classify",surface=surface,Streams=[icetray.I3Frame.Physics])
     tray.AddModule( reco_q.track_length_in_detector, 'track_length', surface=surface,Streams=[icetray.I3Frame.Physics])
+    tray.AddModule(reco_q.get_primary_nu, "primary_nu",Streams=[icetray.I3Frame.Physics])
     tray.AddModule(save_array,"save")
 
     #tray.AddModule( save_to_array, 'save',Streams=[icetray.I3Frame.Physics])
