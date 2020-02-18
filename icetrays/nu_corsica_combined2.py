@@ -37,10 +37,10 @@ def run(i3_file,geo_file):
     surface = icecube.MuonGun.ExtrudedPolygon.from_file(geo_file, padding=0)
 
     events['track_length'] = []
-    events['track_length'] = []
+    events["classification"] = []
     def save_array(phy_frame):
         events['track_length'].append(phy_frame['track_length'].value)
-        events['classify'].append(phy_frame['classify'].value)
+        events["classification"].append(phy_frame["classify"].value)
 
     tray = I3Tray()
     tray.AddModule("I3Reader","source", FilenameList=i3_file)
@@ -55,7 +55,7 @@ def run(i3_file,geo_file):
 
     print("finish!")
     print(events)
-    print(events['classify'])
+    print(events["classification"])
     np.save("track_length", events)
 
 
