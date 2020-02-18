@@ -41,7 +41,7 @@ def run(i3_file,geo_file):
     def save_array(phy_frame):
         events['track_length'].append(phy_frame['track_length'].value)
         events["classification"].append(phy_frame["classification"].value)
-        events["zenith"].append(phy_frame['primary_nu'].dir.zenith.value)
+        events["zenith"].append(phy_frame['primary_nu'].dir.zenith)
 
     tray = I3Tray()
     tray.AddModule("I3Reader","source", FilenameList=i3_file)
