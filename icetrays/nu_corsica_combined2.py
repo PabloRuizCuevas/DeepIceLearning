@@ -35,53 +35,12 @@ def run(i3_file,geo_file):
     events = dict()
     events['reco_vals'] = []
     surface = icecube.MuonGun.ExtrudedPolygon.from_file(geo_file, padding=0)
-    def save_to_array(phy_frame):
-        """Save the waveforms pulses and reco vals to lists.
 
-        Args:
-            phy_frame, and I3 Physics Frame
-        Returns:
-            True (IceTray standard)
-        """
-        reco_arr = []
-        pulses = None
-        for el in settings:
-            if el[1] == pulsemap_key:
-                try:
-                    pulses = phy_frame[pulsemap_key].apply(phy_frame)
-                except Exception as inst:
-                    print('Failed to add pulses {} \n {}'.format(el[1], inst))
-                    print inst
-                    return False
-            elif el[0] == 'variable':
-                try:
-                    reco_arr.append(eval('phy_frame{}'.format(el[1])))
-                except Exception as inst:
-#                    print inst
-                    reco_arr.append(np.nan)
-            elif el[0] == 'function':
-                try:
-                    reco_arr.append(
-                        eval(el[1].replace('_icframe_', 'phy_frame, geometry_file')))
-                except Exception as inst:
-                    print('Failed to evaluate function {} \n {}'.format(el[1], inst))
-                    return False
-        if pulses is not None:
-            tstr = 'Append Values for run_id {}, event_id {}'
-            eheader = phy_frame['I3EventHeader']
-            print(tstr.format(eheader.run_id, eheader.event_id))
-            events['t0'].append(get_t0(phy_frame))
-            events['pulses'].append(pulses)
-            events['reco_vals'].append(reco_arr)
-        else:
-            print('No pulses in Frame...Skip')
-            return False
-        return
-
+    events['track_length'] = []
     events['track_length'] = []
     def save_array(phy_frame):
         events['track_length'].append(phy_frame['track_length'].value)
-
+        events['classify'].append(phy_frame['classify'].value)
 
     tray = I3Tray()
     tray.AddModule("I3Reader","source", FilenameList=i3_file)
@@ -91,11 +50,13 @@ def run(i3_file,geo_file):
 
     #tray.AddModule( save_to_array, 'save',Streams=[icetray.I3Frame.Physics])
     #save_to_array('track_length')
-
     tray.Execute()
     tray.Finish()
+
     print("finish!")
     print(events)
+    print(events['classify'])
+    np.save("track_length", events)
 
 
 run(list0[0:10],geo_file)
