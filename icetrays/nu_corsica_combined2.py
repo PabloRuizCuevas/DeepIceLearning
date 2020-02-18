@@ -80,7 +80,7 @@ def run(i3_file,geo_file):
 
     events['track_length'] = []
     def save_array(phy_frame):
-        events['track_length'].append(phy_frame['track_length'])
+        events['track_length'].append(phy_frame['track_length'].value)
 
 
     tray = I3Tray()
