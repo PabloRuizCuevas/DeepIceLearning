@@ -82,6 +82,7 @@ def run(i3_file,geo_file):
     def save_array(phy_frame):
         events['track_length'].append(phy_frame['track_length'])
 
+
     tray = I3Tray()
     tray.AddModule("I3Reader","source", FilenameList=i3_file)
     tray.AddModule( reco_q.classify_wrapper, "classify",surface=surface,Streams=[icetray.I3Frame.Physics])
@@ -89,12 +90,12 @@ def run(i3_file,geo_file):
     tray.AddModule(save_array,"save")
 
     #tray.AddModule( save_to_array, 'save',Streams=[icetray.I3Frame.Physics])
-
-
     #save_to_array('track_length')
 
     tray.Execute()
     tray.Finish()
     print("finish!")
+    print(events)
+
 
 run(list0[0:10],geo_file)
