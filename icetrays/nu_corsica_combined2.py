@@ -87,7 +87,7 @@ def run(i3_file,geo_file):
     tray.AddModule( reco_q.classify_wrapper, "classify",surface=surface,Streams=[icetray.I3Frame.Physics])
     tray.AddModule( reco_q.track_length_in_detector, 'track_length', surface=surface,Streams=[icetray.I3Frame.Physics])
     print()
-    print(phy_frame['I3EventHeader'])   #TrayInfo()  keyword argument 'gcdfile' keyword argument 'surface' 'key' 'surface'
+    print(phy_frame)   #TrayInfo()  keyword argument 'gcdfile' keyword argument 'surface' 'key' 'surface'
     print()
     #tray.AddModule( save_to_array, 'save',Streams=[icetray.I3Frame.Physics])
 
