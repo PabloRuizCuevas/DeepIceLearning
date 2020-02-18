@@ -41,7 +41,7 @@ def run(i3_file,geo_file):
     def save_array(phy_frame):
         events['track_length'].append(phy_frame['track_length'].value)
         events["classification"].append(phy_frame["classification"].value)
-        events["zenith"].append(phy_frame['primary_nu'].dir.zenith)
+        events["zenith"].append(phy_frame['primary_nu'].dir.zenith.value)
 
     tray = I3Tray()
     tray.AddModule("I3Reader","source", FilenameList=i3_file)
@@ -57,7 +57,8 @@ def run(i3_file,geo_file):
 
     print("finish!")
     #print(events)
-    np.save("events", events)
-
+    np.save("track_length", np.array(events['track_length']))
+    np.save("classification",  np.array(events["classification"]))
+    np.save("zenith",  np.array(events["zenith"]))
 
 run(list0[0:1000],geo_file)
