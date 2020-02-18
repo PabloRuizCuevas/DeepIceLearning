@@ -56,7 +56,7 @@ def run(i3_file,geo_file):
     tray.Finish()
 
     print("finish!")
-    print(events)
+    #print(events)
     np.save("events", events)
 
 
