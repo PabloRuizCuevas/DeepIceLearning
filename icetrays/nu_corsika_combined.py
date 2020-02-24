@@ -64,7 +64,10 @@ def corsika_weight(phy_frame):
 
 def get_stream(phy_frame):
     ##maybe conditions in steps ara faster.
-    condition=np.logical_and(np.random.uniform(0,1)<0.34,(np.cos(phy_frame['primary_nu'].dir.zenith)*np.random.uniform(0,1))>-0.1)
+    #5 double bangs
+    f2 = lambda x : (2.34136874*np.exp(-x*2.21843066)) + 2.19760958
+    condition= (1/f2(np.cos(phy_frame['primary_nu'].dir.zenith)))>(np.random.uniform(0,1))
+    #condition=np.logical_and(np.random.uniform(0,1)<0.34,(np.cos(phy_frame['primary_nu'].dir.zenith)*np.random.uniform(0,1))>-0.1)
 
     if ((phy_frame['I3EventHeader'].sub_event_stream == 'InIceSplit') & (phy_frame['track_length'].value>5) & (phy_frame['classification'].value==5)):
         return True
