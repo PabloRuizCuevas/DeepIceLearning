@@ -122,7 +122,7 @@ def get_frame_info2(directory,gdfile,N):
                 DeepIce.track_length_in_detector(fr,gdfile, surface=None,  key="visible_track")
                 for n in range(N):
                     data=charge_time_most_recorded_dom(fr,n)             ##salen datos repetidos por parejas???
-                    frames.append(Data(count,data[0],data[1],data[2],data[3],fr["classification"].value,fr["track_length"].value,i))
+                frames.append(Data(count,data[0],data[1],data[2],data[3],fr["classification"].value,fr["track_length"].value,i))
 
             count+=1
     np.save("frames2",frames)
@@ -136,6 +136,10 @@ frames2=get_frame_info2(directory,gdfile,10)
 DeepIce.track_length_in_detector(fr,"/data/user/pruiz/i3/GeoCalibDetectorStatus_2013.56429_V0.i3.gz", surface=None,  key="visible_track")
 
 
+
+
+frames0=np.load('/data/user/pruiz/DeepIceLearning/frames2.npy')
+frames0=frames0[[ 2*i for i in range(len(frames0)/2)]]   ##destros half of the data repeated data???
 
 
 #####################################plot data##################################

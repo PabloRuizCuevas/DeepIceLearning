@@ -122,18 +122,11 @@ time2,density=charge_density(charge,time)
 plot(time2,density)
 
 
-
 bins = np.linspace(9800,10600,29)
 plt.hist(time2, weights=density,bins=bins)
 plt.savefig("Double_bang4.png")
 #plt.xlim(9800, 11000)
 plt.show()
-
-
-
-
-
-
 
 
 time2
